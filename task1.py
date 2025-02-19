@@ -1,30 +1,39 @@
-def caesar_cipher(text, shift, mode='encrypt'):
-    result = ""
-    if mode == 'decrypt':
-        shift = -shift
+import string
+
+def caesar_cipher(text, shift, encrypt=True):
+    result = []
+    shift = shift if encrypt else -shift
     
     for char in text:
-        if char.isalpha():
-            shift_base = ord('A') if char.isupper() else ord('a')
-            result += chr((ord(char) - shift_base + shift) % 26 + shift_base)
+        if char in string.ascii_letters:
+            base = ord('A') if char.isupper() else ord('a')
+            new_char = chr((ord(char) - base + shift) % 26 + base)
+            result.append(new_char)
         else:
-            result += char
+            result.append(char)
     
-    return result
+    return ''.join(result)
 
-if __name__ == "__main__":
+def main():
     while True:
-        mode = input("Enter mode (encrypt/decrypt): ").strip().lower()
-        if mode not in ['encrypt', 'decrypt']:
-            print("Invalid mode. Please enter 'encrypt' or 'decrypt'.")
+        action = input("Type 'E' to encrypt or 'D' to decrypt: ").strip().upper()
+        if action not in {'E', 'D'}:
+            print("Invalid choice, try again.")
             continue
         
-        text = input("Enter message: ")
-        shift = int(input("Enter shift value: "))
+        message = input("Enter the text: ")
+        try:
+            shift_value = int(input("Enter shift value (integer): "))
+        except ValueError:
+            print("Invalid shift value, must be an integer.")
+            continue
         
-        result = caesar_cipher(text, shift, mode)
-        print(f"Result: {result}\n")
+        encrypted = action == 'E'
+        output = caesar_cipher(message, shift_value, encrypted)
+        print(f"Result: {output}\n")
         
-        another = input("Do you want to process another message? (yes/no): ").strip().lower()
-        if another != 'yes':
+        if input("Run again? (yes/no): ").strip().lower() != 'yes':
             break
+
+if __name__ == "__main__":
+    main()
